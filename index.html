@@ -1,59 +1,42 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="fa">
 <head>
     <meta charset="UTF-8">
-    <title>تایپ سلام</title>
+    <title>شمارنده ساده</title>
     <style>
         body {
+            margin: 0;
+            height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            font-family: Tahoma, sans-serif;
+            background: #f7f7f7;
+            font-family: 'Courier New', monospace;
         }
-        #output {
-            font-size: 6rem;
-            color: #fff;
-            text-shadow: 0 0 20px rgba(255,255,255,0.8);
+        .counter {
+            background: white;
+            padding: 30px 60px;
+            border-radius: 20px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            font-size: 4rem;
             font-weight: bold;
-        }
-        .cursor {
-            display: inline-block;
-            width: 4px;
-            height: 6rem;
-            background: #fff;
-            margin-right: 5px;
-            animation: blink 0.8s infinite;
-            vertical-align: middle;
-        }
-        @keyframes blink {
-            50% { opacity: 0; }
+            color: #2d2d2d;
+            letter-spacing: 4px;
         }
     </style>
 </head>
 <body>
-    <div>
-        <span id="output"></span><span class="cursor"></span>
-    </div>
+    <div class="counter" id="counter">0</div>
 
     <script>
-        const text = "چطوری";
-        let i = 0;
-        const output = document.getElementById("output");
+        let count = 0;
+        const counterEl = document.getElementById('counter');
 
-        function type() {
-            if (i < text.length) {
-                output.textContent += text.charAt(i);
-                i++;
-                setTimeout(type, 300);
-            }
-        }
-
-        window.onload = () => {
-            setTimeout(type, 500);
-        };
+        // هر ثانیه یک عدد اضافه می‌شود
+        setInterval(() => {
+            count++;
+            counterEl.textContent = count;
+        }, 1000);
     </script>
 </body>
 </html>
