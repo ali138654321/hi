@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>دایناسور کروم | بازی آفلاین</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            user-select: none;
+        }
+        body {
+            margin: 0;
+            min-height: 100vh;
+            background: #f7f7f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: 'Courier New', Courier, monospace;
+        }
+        .game-wrapper {
+            background: white;
+            border-radius: 24px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            padding: 20px 25px 25px 25px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        canvas {
+            display: block;
+            width: 600px;
+            height: 200px;
+            border: 2px solid #535353;
+            border-radius: 12px;
+            background: #ffffff;
+            cursor: pointer;
+        }
+        .info-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 0 8px;
+            font-weight: bold;
+            color: #2d2d2d;
+            letter-spacing: 1px;
+        }
+        .score-box, .level-box {
+            background: #e0e0e0;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-size: 1rem;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+        }
+        .hint {
+            margin-top: 10px;
+            color: #6b6b6b;
+            font-size: 0.85rem;
+            display: flex;
+            gap: 20px;
+        }
+        .hint kbd {
+            background: #f0f0f0;
+            border-radius: 6px;
+            padding: 2px 8px;
+            border: 1px solid #b0b0b0;
+            font-family: inherit;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+<div class="game-wrapper">
+    <div class="info-bar">
+        <div class="score-box">امتیاز: <span id="scoreDisplay">00000</span></div>
+        <div class="level-box">سطح: <span id="levelDisplay">1</span></div>
+    </div>
+    <canvas id="gameCanvas" width="600" height="200"></canvas>
+    <div class="hint">
+        <span><kbd>Space</kbd> پرش</span>
+        <span><kbd>R</kbd> شروع دوباره</span>
+    </div>
+</div>
+
+<script>
+    (function() {
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // نمایش امتیاز و سطح
+        const scoreSpan = document.getElementById('scoreDisplay');
+        const levelSpan = document.getElementById('levelDisplay');
+
+        // ابعاد ثابت
+        const GROUND_Y = 170;        // خط زمین (نزدیک پایین بوم)
+        const DINO_WIDTH = 22;
+        const DINO_HEIGHT = 24;
+        const DINO_X = 50;
+
+        // وضعیت بازی
+        let gameOver = false;
+        let gameStarted = false;    // با اولین پرش شروع می‌شود
+        let score = 0;
+        let level = 1;
+        let baseSpeed = 4;          // سرعت پایه موانع (بر اساس سطح زیاد می‌شود)
+
+        // دایناسور
+        const dino = {
+            x: DINO_X,
+            y: GROUND_Y - DINO_HEIGHT,
+            width: DINO_WIDTH,
+            height: DINO_HEIGHT,
+            vy: 0,
+            gravity: 0.55,
+            jumpPower: -10,
+            grounded: true
+        };
+
+        // موانع (کاکتوس‌ها)
+        let obstacles = [];
+
+        // زمان‌سنج تولید موانع
+        let frameCounter = 0;
+        const MIN_OBS_SPAWN_INTERVAL = 55; // فریم (با افزایش سطح کمتر می‌شود)
+
+        // ذخیره‌سازی انیمیشن
+        let animationId = null;
+        let lastTimestamp = 0;
+
+        // ---------- توابع کمکی ----------
+        function formatScore(value) {
+            return value.toString().padStart(5, '0');
+        }
+
+        // به‌روزرسانی نمایش امتیاز و سطح
+        function updateUI() {
+            scoreSpan.textContent = formatScore(Math.floor(score));
+            levelSpan.textContent = level;
+        }
+
+        // ریست کامل بازی
+        function resetGame() {
+            gameOver = false;
+            gameStarted = false;
+            score = 0;
+            level = 1;
+            baseSpeed = 4;
+            obstacles = [];
+            dino.y = GROUND_Y - DINO_HEIGHT;
+            dino.vy = 0;
+            dino.grounded = true;
+            frameCounter = 0;
+            updateUI();
+        }
+
+        // شروع پرش (اگر بازی تمام نشده باشد)
+        function jump() {
+            if (gameOver) return;
+            // اگر بازی هنوز شروع نشده، شروعش کن
+            if (!gameStarted) {
+                gameStarted = true;
+            }
+            // فقط اگر روی زمین باشد می‌تواند بپرد
+            if (dino.grounded) {
+                dino.vy = dino.jumpPower;
+                dino.grounded = false;
+            }
+        }
+
+        // به‌روزرسانی فیزیک دایناسور
+        function updateDino() {
+            // اعمال گرانش
+            dino.vy += dino.gravity;
+            dino.y += dino.vy;
+
+            // برخورد با زمین
+            if (dino.y >= GROUND_Y - DINO_HEIGHT) {
+                dino.y = GROUND_Y - DINO_HEIGHT;
+                dino.vy = 0;
+                dino.grounded = true;
+            } else {
+                dino.grounded = false;
+            }
+        }
+
+        // تولید موانع (کاکتوس)
+        function spawnObstacleIfNeeded() {
+            if (!gameStarted || gameOver) return;
+
+            // فاصله تولید بر اساس سطح (هرچه سطح بالاتر، فاصله کمتر)
+            const spawnInterval = Math.max(30, MIN_OBS_SPAWN_INTERVAL - (level * 3));
+
+            if (frameCounter >= spawnInterval) {
+                // ارتفاع کاکتوس تصادفی بین 18 تا 28
+                const height = Math.floor(Math.random() * 10) + 18; // 18-27
+                const width = 14 + Math.floor(Math.random() * 6);    // 14-19
+
+                obstacles.push({
+                    x: canvas.width,
+                    y: GROUND_Y - height,  // بالای زمین
+                    width: width,
+                    height: height,
+                    speed: baseSpeed + (level - 1) * 0.8 // سرعت اختصاصی هر مانع (بر اساس سطح)
+                });
+
+                frameCounter = 0; // ریست شمارنده
+            } else {
+                frameCounter++;
+            }
+        }
+
+        // به‌روزرسانی موانع و بررسی برخورد
+        function updateObstacles() {
+            // حرکت موانع به چپ
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                const obs = obstacles[i];
+                obs.x -= obs.speed;
+
+                // حذف موانع خارج از صفحه
+                if (obs.x + obs.width < 0) {
+                    obstacles.splice(i, 1);
+                    continue;
+                }
+
+                // بررسی برخورد با دایناسور (فقط اگر بازی تمام نشده باشد)
+                if (!gameOver && gameStarted) {
+                    // برخورد AABB
+                    if (dino.x < obs.x + obs.width &&
+                        dino.x + dino.width > obs.x &&
+                        dino.y < obs.y + obs.height &&
+                        dino.y + dino.height > obs.y) {
+                        gameOver = true;   // پایان بازی
+                    }
+                }
+            }
+        }
+
+        // افزایش امتیاز و سطح
+        function updateScoreAndLevel() {
+            if (!gameStarted || gameOver) return;
+
+            // امتیاز بر اساس فریم‌های سپری شده (هر فریم 0.1 امتیاز)
+            score += 0.1;
+
+            // سطح بر اساس امتیاز: هر 100 امتیاز یک سطح
+            const newLevel = Math.floor(score / 100) + 1;
+            if (newLevel > level) {
+                level = newLevel;
+                // با افزایش سطح، سرعت پایه هم زیاد می‌شود (برای موانع جدید)
+                baseSpeed = 4 + (level - 1) * 0.7;
+            }
+
+            updateUI();
+        }
+
+        // ---------- رسم گرافیک ----------
+        // دایناسور پیکسلی (با استفاده از مربع‌های کوچک)
+        function drawDino() {
+            const x = dino.x;
+            const y = dino.y;
+            const w = dino.width;
+            const h = dino.height;
+
+            // رنگ بدنه دایناسور (خاکستری تیره مثل کروم)
+            ctx.fillStyle = '#3b3b3b';
+            ctx.strokeStyle = '#3b3b3b';
+            ctx.lineWidth = 1;
+
+            // بدن اصلی (مستطیل)
+            ctx.fillRect(x + 2, y + 4, w - 4, h - 8);
+
+            // سر (مربع بالایی)
+            ctx.fillRect(x + 6, y, 10, 8);
+
+            // پاها (دو مستطیل کوچک پایین)
+            ctx.fillRect(x + 4, y + h - 4, 4, 4);
+            ctx.fillRect(x + w - 8, y + h - 4, 4, 4);
+
+            // دم (مثلث ساده با مسیر)
+            ctx.beginPath();
+            ctx.moveTo(x, y + 10);
+            ctx.lineTo(x - 6, y + 14);
+            ctx.lineTo(x, y + 18);
+            ctx.fill();
+
+            // چشم (سفید)
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(x + 11, y + 2, 2, 2);
+            // مردمک (مشکی)
+            ctx.fillStyle = '#000000';
+            ctx.fillRect(x + 12, y + 2, 1, 2);
+
+            // دست (خط کوچک)
+            ctx.fillStyle = '#3b3b3b';
+            ctx.fillRect(x + w - 6, y + 10, 4, 2);
+        }
+
+        // رسم کاکتوس‌ها
+        function drawObstacles() {
+            for (let obs of obstacles) {
+                // رنگ سبز تیره/خاکستری مایل به سبز (شبیه کروم)
+                ctx.fillStyle = '#5a7a4a';
+                ctx.strokeStyle = '#3a5a2a';
+                ctx.lineWidth = 1;
+
+                // تنه اصلی
+                ctx.fillRect(obs.x + 2, obs.y, obs.width - 4, obs.height);
+
+                // شاخه‌های فرعی (دو طرف) برای ظاهر کاکتوس
+                // شاخه سمت چپ
+                ctx.fillRect(obs.x - 3, obs.y + 6, 5, 6);
+                // شاخه سمت راست
+                ctx.fillRect(obs.x + obs.width - 2, obs.y + 8, 5, 6);
+
+                // خطوطRect تیره داخل تنه
+                ctx.fillStyle = '#3a5a2a';
+                ctx.fillRect(obs.x + 4, obs.y + 2, 2, obs.height - 4);
+                ctx.fill(obs.x + obs.width - 6, obs.y + 5, 2, obs.height - 8);
+            }
+        }
+
+        // رسم زمین (خط افقی)
+        function drawGround() {
+            ctx.beginPath();
+            ctx.strokeStyle = '#535353';
+            ctx.lineWidth = 2;
+            ctx.moveTo(0, GROUND_Y);
+            ctx.lineTo(canvas.width, GROUND_Y);
+            ctx.stroke();
+
+            // چند نقطه و خط برای بافت خاک
+            ctx.fillStyle = '#9e9e9e';
+            for (let i = 0; i < canvas.width; i += 30) {
+                ctx.fillRect(i + (frameCounter * 2) % 30, GROUND_Y + 2, 6, 2);
+            }
+        }
+
+        // رسم صفحه (اگر بازی تمام شده باشد)
+        function drawGameOver() {
+            if (!gameOver) return;
+
+            ctx.fillStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            ctx.font = 'bold 22px "Courier New", monospace';
+            ctx.fillStyle = '#2d2d2d';
+            ctx.textAlign = 'center';
+            ctx.fillText('GAME OVER', canvas.width / 2, canvas.height / 2 - 10);
+
+            ctx.font = '16px "Courier New", monospace';
+            ctx.fillStyle = '#555';
+            ctx.fillText('برای شروع دوباره R را بزنید', canvas.width / 2, canvas.height / 2 + 30);
+        }
+
+        // رسم کل صحنه
+        function drawScene() {
+            // پاک کردن
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // پس‌زمینه سفید
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // رسم زمین
+            drawGround();
+
+            // رسم کاکتوس‌ها
+            drawObstacles();
+
+            // رسم دایناسور
+            drawDino();
+
+            // اگر بازی تمام شده، پیام بگذار
+            drawGameOver();
+
+            // اگر بازی شروع نشده، راهنما نشان بده
+            if (!gameStarted && !gameOver) {
+                ctx.font = '14px "Courier New", monospace';
+                ctx.fillStyle = '#7a7a7a';
+                ctx.textAlign = 'center';
+                ctx.fillText('برای شروع Space را بزنید', canvas.width / 2, 70);
+            }
+
+            // اگر بازی تمام شده، امتیاز نهایی را هم نشان بده
+            if (gameOver) {
+                ctx.font = 'bold 16px "Courier New", monospace';
+                ctx.fillStyle = '#2d2d2d';
+                ctx.fillText('امتیاز: ' + formatScore(Math.floor(score)), canvas.width / 2, 110);
+            }
+        }
+
+        // ---------- حلقه اصلی بازی ----------
+        function gameLoop(now) {
+            if (!lastTimestamp) lastTimestamp = now;
+            lastTimestamp = now;
+
+            if (!gameOver) {
+                // اگر بازی شروع شده، همه‌چیز به‌روز شود
+                if (gameStarted) {
+                    updateDino();
+                    updateScoreAndLevel();
+                    spawnObstacleIfNeeded();
+                    updateObstacles();
+                } else {
+                    // اگر بازی شروع نشده، فقط انیمیشن پرش را غیرفعال نگهدار
+                    // اما دایناسور روی زمین ثابت است
+                    dino.y = GROUND_Y - DINO_HEIGHT;
+                    dino.vy = 0;
+                    dino.grounded = true;
+                }
+            }
+
+            // همیشه رسم کن
+            drawScene();
+
+            // ادامه حلقه
+            animationId = requestAnimationFrame(gameLoop);
+        }
+
+        // ---------- مدیریت رویدادها ----------
+        function handleKeyDown(e) {
+            const key = e.key;
+            // جلوگیری از اسکرول صفحه با Space و فلش‌ها
+            if (key === ' ' || key === 'Space' || key === 'ArrowUp') {
+                e.preventDefault();
+            }
+
+            // پرش با Space یا فلش بالا
+            if (key === ' ' || key === 'Space' || key === 'ArrowUp') {
+                jump();
+            }
+
+            // شروع دوباره با R
+            if (key === 'r' || key === 'R') {
+                e.preventDefault();
+                resetGame();
+            }
+        }
+
+        // برای جلوگیری از اسکرول با کلید فاصله در کل صفحه
+        window.addEventListener('keydown', function(e) {
+            if (e.key === ' ' || e.key === 'Space' || e.key === 'ArrowUp' || e.key === 'r' || e.key === 'R') {
+                e.preventDefault();
+            }
+        });
+
+        // رویداد اصلی روی کشو
+        document.addEventListener('keydown', handleKeyDown);
+
+        // کلیک روی کنواس هم پرش میکنه (برای موبایل یا راحتی)
+        canvas.addEventListener('click', function() {
+            jump();
+        });
+
+        // دابل کلیک برای ریست (اختیاری)
+        canvas.addEventListener('dblclick', function() {
+            resetGame();
+        });
+
+        // راه‌اندازی اولیه
+        resetGame();
+
+        // شروع حلقه
+        if (animationId) cancelAnimationFrame(animationId);
+        animationId = requestAnimationFrame(gameLoop);
+
+        // پاکسازی در صورت نیاز (اختیاری)
+        window.addEventListener('beforeunload', function() {
+            if (animationId) cancelAnimationFrame(animationId);
+        });
+    })();
+</script>
+</body>
+</html>
