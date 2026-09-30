@@ -27,7 +27,6 @@ body{
   overflow-x:hidden;
 }
 
-/* ============ انیمیشن‌های عمومی ============ */
 @keyframes fadeUp{from{opacity:0;transform:translateY(30px)}to{opacity:1;transform:translateY(0)}}
 @keyframes fadeIn{from{opacity:0}to{opacity:1}}
 @keyframes steam{
@@ -40,7 +39,6 @@ body{
 @keyframes pulseGold{0%,100%{box-shadow:0 0 0 0 rgba(201,162,39,.5)}50%{box-shadow:0 0 0 14px rgba(201,162,39,0)}}
 @keyframes slideIn{from{transform:translateX(120%)}to{transform:translateX(0)}}
 
-/* ============ هدر ============ */
 header{
   position:sticky;top:0;z-index:100;
   background:rgba(43,26,18,.92);
@@ -71,7 +69,6 @@ nav button:hover{background:var(--gold);color:var(--brown-dark)}
   display:grid;place-items:center;font-weight:700;
 }
 
-/* ============ صفحه اصلی - هیرو ============ */
 .hero{
   min-height:88vh;display:flex;align-items:center;justify-content:space-between;
   padding:60px 8%;gap:40px;position:relative;overflow:hidden;
@@ -95,7 +92,6 @@ nav button:hover{background:var(--gold);color:var(--brown-dark)}
 }
 .btn-primary:hover{transform:translateY(-4px);box-shadow:0 18px 45px rgba(74,44,26,.4);background:linear-gradient(135deg,var(--brown-mid),var(--gold))}
 
-/* فنجان انیمیشنی */
 .hero-visual{position:relative;animation:fadeIn 1.4s ease}
 .cup-big{
   width:280px;height:280px;border-radius:50% 50% 40% 40%;
@@ -127,7 +123,6 @@ nav button:hover{background:var(--gold);color:var(--brown-dark)}
   background:radial-gradient(ellipse,rgba(43,26,18,.25),transparent 70%);
 }
 
-/* ============ بخش محصولات ============ */
 .products-section{padding:80px 6%}
 .section-title{text-align:center;margin-bottom:55px}
 .section-title h2{font-size:2.4rem;font-weight:900;margin-bottom:12px}
@@ -151,10 +146,11 @@ nav button:hover{background:var(--gold);color:var(--brown-dark)}
   height:230px;background:linear-gradient(135deg,var(--cream-2),var(--accent));
   display:grid;place-items:center;font-size:5rem;position:relative;overflow:hidden;
 }
+.product-img img{width:100%;height:100%;object-fit:cover}
 .product-img::after{
   content:'';position:absolute;inset:0;
   background:linear-gradient(45deg,transparent 40%,rgba(255,255,255,.4) 50%,transparent 60%);
-  transform:translateX(-100%);transition:.6s;
+  transform:translateX(-100%);transition:.6s;pointer-events:none;
 }
 .product-card:hover .product-img::after{transform:translateX(100%)}
 .product-info{padding:22px;display:flex;flex-direction:column;gap:10px;flex:1}
@@ -170,7 +166,6 @@ nav button:hover{background:var(--gold);color:var(--brown-dark)}
 }
 .add-btn:hover{background:var(--gold);color:var(--brown-dark)}
 
-/* ============ صفحه جزئیات محصول ============ */
 .page{display:none;animation:fadeIn .5s ease}
 .page.active{display:block}
 
@@ -187,7 +182,9 @@ nav button:hover{background:var(--gold);color:var(--brown-dark)}
   background:linear-gradient(135deg,var(--cream-2),var(--accent));
   display:grid;place-items:center;font-size:9rem;
   box-shadow:var(--shadow);animation:float 5s ease-in-out infinite;
+  overflow:hidden;
 }
+.detail-img img{width:100%;height:100%;object-fit:cover}
 .detail-info h1{font-size:2.4rem;font-weight:900;margin-bottom:16px}
 .detail-price{font-size:2rem;font-weight:900;color:var(--brown-mid);margin-bottom:24px}
 .detail-price small{font-size:.9rem;color:var(--brown)}
@@ -199,7 +196,6 @@ nav button:hover{background:var(--gold);color:var(--brown-dark)}
 .spec-row span:first-child{color:var(--brown);font-weight:500}
 .spec-row span:last-child{font-weight:700}
 
-/* ============ سبد خرید ============ */
 .cart-page{padding:50px 8%;max-width:900px;margin:0 auto;min-height:70vh}
 .cart-page h1{font-size:2.2rem;margin-bottom:30px;font-weight:900}
 .cart-item{
@@ -210,8 +206,9 @@ nav button:hover{background:var(--gold);color:var(--brown-dark)}
 .cart-item .ci-img{
   width:70px;height:70px;border-radius:15px;
   background:linear-gradient(135deg,var(--cream-2),var(--accent));
-  display:grid;place-items:center;font-size:2rem;
+  display:grid;place-items:center;font-size:2rem;overflow:hidden;flex-shrink:0;
 }
+.cart-item .ci-img img{width:100%;height:100%;object-fit:cover}
 .cart-item .ci-info{flex:1}
 .cart-item .ci-info h4{font-size:1.05rem;margin-bottom:6px}
 .cart-item .ci-info .ci-price{color:var(--brown-mid);font-weight:700}
@@ -232,7 +229,6 @@ nav button:hover{background:var(--gold);color:var(--brown-dark)}
 .empty-cart{text-align:center;padding:80px 20px;color:var(--brown)}
 .empty-cart .icon{font-size:5rem;margin-bottom:20px;opacity:.5}
 
-/* ============ صفحه پرداخت ============ */
 .checkout-page{padding:50px 8%;max-width:700px;margin:0 auto}
 .checkout-page h1{text-align:center;font-size:2.2rem;margin-bottom:12px;font-weight:900}
 .checkout-page .sub{text-align:center;color:var(--brown);margin-bottom:35px}
@@ -278,6 +274,9 @@ nav button:hover{background:var(--gold);color:var(--brown-dark)}
 .form-group input:focus,.form-group textarea:focus{
   outline:none;border-color:var(--gold);background:var(--white);
 }
+.form-group input[type="file"]{
+  padding:12px;cursor:pointer;
+}
 .submit-order{
   width:100%;background:linear-gradient(135deg,var(--brown),var(--brown-mid));
   color:var(--cream);border:none;padding:18px;border-radius:16px;
@@ -290,7 +289,6 @@ nav button:hover{background:var(--gold);color:var(--brown-dark)}
   text-align:center;font-weight:600;margin-top:18px;animation:fadeUp .5s ease;
 }
 
-/* ============ پنل ادمین ============ */
 .admin-login{
   min-height:80vh;display:grid;place-items:center;padding:40px 20px;
 }
@@ -327,8 +325,9 @@ nav button:hover{background:var(--gold);color:var(--brown-dark)}
 .admin-product-row .ap-img{
   width:60px;height:60px;border-radius:14px;
   background:linear-gradient(135deg,var(--cream-2),var(--accent));
-  display:grid;place-items:center;font-size:1.8rem;flex-shrink:0;
+  display:grid;place-items:center;font-size:1.8rem;flex-shrink:0;overflow:hidden;
 }
+.admin-product-row .ap-img img{width:100%;height:100%;object-fit:cover}
 .admin-product-row .ap-info{flex:1}
 .admin-product-row .ap-info h4{margin-bottom:5px}
 .admin-product-row .ap-info .ap-price{color:var(--brown-mid);font-weight:700;font-size:.95rem}
@@ -349,7 +348,6 @@ nav button:hover{background:var(--gold);color:var(--brown-dark)}
 .form-row{display:grid;grid-template-columns:1fr 1fr;gap:18px}
 .form-row.full{grid-template-columns:1fr}
 
-/* ============ اعلان ============ */
 .toast{
   position:fixed;bottom:30px;left:30px;background:var(--brown-dark);
   color:var(--cream);padding:16px 26px;border-radius:14px;
@@ -359,7 +357,6 @@ nav button:hover{background:var(--gold);color:var(--brown-dark)}
 }
 .toast .dot{width:10px;height:10px;border-radius:50%;background:var(--gold)}
 
-/* ============ ریسپانسیو ============ */
 @media(max-width:900px){
   .hero{flex-direction:column;text-align:center;padding:40px 6%}
   .hero-text h1{font-size:2.5rem}
@@ -381,11 +378,10 @@ nav button:hover{background:var(--gold);color:var(--brown-dark)}
 </head>
 <body>
 
-<!-- ============ هدر ============ -->
 <header>
   <div class="logo" onclick="showPage('home')">
     <div class="cup">☕</div>
-    قهوه‌ساز پارس
+    <span id="brandName">قهوه‌ساز پارس</span>
   </div>
   <nav>
     <button onclick="showPage('home')">خانه</button>
@@ -396,7 +392,6 @@ nav button:hover{background:var(--gold);color:var(--brown-dark)}
   </nav>
 </header>
 
-<!-- ============ صفحه اصلی ============ -->
 <div id="page-home" class="page active">
   <section class="hero">
     <div class="hero-text">
@@ -423,7 +418,6 @@ nav button:hover{background:var(--gold);color:var(--brown-dark)}
   </section>
 </div>
 
-<!-- ============ صفحه جزئیات محصول ============ -->
 <div id="page-detail" class="page">
   <div class="product-detail">
     <button class="back-btn" onclick="showPage('home')">→ بازگشت به فروشگاه</button>
@@ -431,7 +425,6 @@ nav button:hover{background:var(--gold);color:var(--brown-dark)}
   </div>
 </div>
 
-<!-- ============ صفحه سبد خرید ============ -->
 <div id="page-cart" class="page">
   <div class="cart-page">
     <h1>🛒 سبد خرید شما</h1>
@@ -439,7 +432,6 @@ nav button:hover{background:var(--gold);color:var(--brown-dark)}
   </div>
 </div>
 
-<!-- ============ صفحه پرداخت ============ -->
 <div id="page-checkout" class="page">
   <div class="checkout-page">
     <h1>تکمیل خرید</h1>
@@ -487,9 +479,7 @@ nav button:hover{background:var(--gold);color:var(--brown-dark)}
   </div>
 </div>
 
-<!-- ============ پنل ادمین ============ -->
 <div id="page-admin" class="page">
-  <!-- لاگین -->
   <div id="adminLogin" class="admin-login">
     <div class="login-box">
       <div class="lock">🔐</div>
@@ -503,7 +493,6 @@ nav button:hover{background:var(--gold);color:var(--brown-dark)}
     </div>
   </div>
 
-  <!-- پنل اصلی -->
   <div id="adminMain" class="admin-panel" style="display:none">
     <div class="admin-header">
       <h1>⚙️ پنل مدیریت</h1>
@@ -514,9 +503,9 @@ nav button:hover{background:var(--gold);color:var(--brown-dark)}
     </div>
 
     <div class="admin-tabs">
-      <button class="admin-tab active" onclick="switchTab('list')">📦 لیست محصولات</button>
-      <button class="admin-tab" onclick="switchTab('add')">➕ افزودن محصول</button>
-      <button class="admin-tab" onclick="switchTab('settings')">⚙️ تنظیمات پرداخت</button>
+      <button class="admin-tab active" onclick="switchTab('list',event)">📦 لیست محصولات</button>
+      <button class="admin-tab" onclick="switchTab('add',event)">➕ افزودن محصول</button>
+      <button class="admin-tab" onclick="switchTab('settings',event)">⚙️ تنظیمات پرداخت</button>
     </div>
 
     <div id="tab-list" class="admin-tab-content active">
@@ -528,6 +517,7 @@ nav button:hover{background:var(--gold);color:var(--brown-dark)}
         <h3 id="formTitle">افزودن محصول جدید</h3>
         <form id="productForm" onsubmit="saveProduct(event)">
           <input type="hidden" id="editId">
+          <input type="hidden" id="pImage" value="">
           <div class="form-row">
             <div class="form-group">
               <label>نام محصول</label>
@@ -540,14 +530,15 @@ nav button:hover{background:var(--gold);color:var(--brown-dark)}
           </div>
           <div class="form-row">
             <div class="form-group">
-              <label>ایموجی / آیکن</label>
+              <label>ایموجی / آیکن (در صورت نبود عکس)</label>
               <input type="text" id="pIcon" placeholder="مثلاً ☕" value="☕">
             </div>
             <div class="form-group">
-              <label>لینک تصویر (اختیاری)</label>
-              <input type="text" id="pImage" placeholder="https://...">
+              <label>عکس محصول</label>
+              <input type="file" id="pImageFile" accept="image/*" onchange="handleImageUpload(event)">
             </div>
           </div>
+          <div id="imagePreview" style="margin-bottom:18px"></div>
           <div class="form-group">
             <label>توضیح کوتاه (برای کارت محصول)</label>
             <input type="text" id="pShort" required>
@@ -561,6 +552,7 @@ nav button:hover{background:var(--gold);color:var(--brown-dark)}
             <textarea id="pSpecs" rows="4" placeholder="توان | 1450 وات&#10;ظرفیت | 1.5 لیتر&#10;جنس بدنه | استیل"></textarea>
           </div>
           <button type="submit" class="submit-order">💾 ذخیره محصول</button>
+          <button type="button" class="back-btn" style="width:100%;margin-top:10px" onclick="resetForm()">🔄 فرم جدید</button>
         </form>
       </div>
     </div>
@@ -581,13 +573,13 @@ nav button:hover{background:var(--gold);color:var(--brown-dark)}
           <input type="text" id="setBrand">
         </div>
         <button class="submit-order" onclick="saveSettings()">💾 ذخیره تنظیمات</button>
+        <button type="button" class="back-btn" style="width:100%;margin-top:10px;border-color:#e74c3c;color:#e74c3c" onclick="resetAllData()">🗑️ بازنشانی کل داده‌ها</button>
       </div>
     </div>
   </div>
 </div>
 
 <script>
-/* ============ داده‌های پیش‌فرض ============ */
 const defaultProducts = [
   {
     id: 1,
@@ -687,7 +679,6 @@ const defaultProducts = [
   }
 ];
 
-/* ============ State ============ */
 let products = JSON.parse(localStorage.getItem('coffee_products')) || defaultProducts;
 let cart = JSON.parse(localStorage.getItem('coffee_cart')) || [];
 let settings = JSON.parse(localStorage.getItem('coffee_settings')) || {
@@ -697,14 +688,18 @@ let settings = JSON.parse(localStorage.getItem('coffee_settings')) || {
 };
 const ADMIN_PASS = "admin123";
 
-/* ============ ذخیره ============ */
 function saveAll(){
-  localStorage.setItem('coffee_products', JSON.stringify(products));
-  localStorage.setItem('coffee_cart', JSON.stringify(cart));
-  localStorage.setItem('coffee_settings', JSON.stringify(settings));
+  try {
+    localStorage.setItem('coffee_products', JSON.stringify(products));
+    localStorage.setItem('coffee_cart', JSON.stringify(cart));
+    localStorage.setItem('coffee_settings', JSON.stringify(settings));
+    return true;
+  } catch(e) {
+    showToast('❌ ظرفیت ذخیره‌سازی پر شده! عکس‌های سنگین‌تر را حذف کن');
+    return false;
+  }
 }
 
-/* ============ ناوبری صفحات ============ */
 function showPage(name){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
@@ -713,14 +708,15 @@ function showPage(name){
   if(name==='home') renderProducts();
 }
 
-/* ============ رندر محصولات ============ */
 function renderProducts(){
   const grid = document.getElementById('productsGrid');
-  grid.innerHTML = products.map((p,i)=>`
+  grid.innerHTML = products.map((p,i)=>{
+    const imgContent = p.image
+      ? `<img src="${p.image}" alt="${p.name}" onerror="this.style.display='none';this.parentElement.innerHTML='${p.icon}'">`
+      : p.icon;
+    return `
     <div class="product-card" style="animation-delay:${i*0.08}s" onclick="openDetail(${p.id})">
-      <div class="product-img">
-        ${p.image ? `<img src="${p.image}" style="width:100%;height:100%;object-fit:cover" onerror="this.style.display='none';this.parentElement.innerHTML='${p.icon}'">` : p.icon}
-      </div>
+      <div class="product-img">${imgContent}</div>
       <div class="product-info">
         <h3>${p.name}</h3>
         <p class="desc">${p.short}</p>
@@ -730,27 +726,27 @@ function renderProducts(){
         </div>
       </div>
     </div>
-  `).join('');
+  `}).join('');
 }
 
-/* ============ جزئیات محصول ============ */
 function openDetail(id){
   const p = products.find(x=>x.id===id);
   if(!p) return;
   const specs = (p.specs||[]).map(s=>`
     <div class="spec-row"><span>${s[0]}</span><span>${s[1]}</span></div>
   `).join('');
+  const imgContent = p.image
+    ? `<img src="${p.image}" alt="${p.name}" onerror="this.style.display='none';this.parentElement.innerHTML='${p.icon}'">`
+    : p.icon;
   document.getElementById('detailGrid').innerHTML = `
-    <div class="detail-img">
-      ${p.image ? `<img src="${p.image}" style="width:100%;height:100%;object-fit:cover;border-radius:30px" onerror="this.style.display='none';this.parentElement.innerHTML='${p.icon}'">` : p.icon}
-    </div>
+    <div class="detail-img">${imgContent}</div>
     <div class="detail-info">
       <h1>${p.name}</h1>
       <div class="detail-price">${p.price.toLocaleString('fa-IR')} <small>تومان</small></div>
       <p class="full-desc">${p.full}</p>
       <div class="specs">
         <h3>📋 مشخصات فنی</h3>
-        ${specs}
+        ${specs || '<p style="color:var(--brown)">مشخصات فنی ثبت نشده</p>'}
       </div>
       <button class="btn-primary" onclick="addToCart(${p.id});showPage('cart')">🛒 افزودن به سبد و مشاهده سبد</button>
     </div>
@@ -758,7 +754,6 @@ function openDetail(id){
   showPage('detail');
 }
 
-/* ============ سبد خرید ============ */
 function addToCart(id){
   const item = cart.find(x=>x.id===id);
   if(item){ item.qty++ }
@@ -789,9 +784,13 @@ function renderCart(){
     return;
   }
   const total = cart.reduce((s,i)=>s+i.price*i.qty,0);
-  content.innerHTML = cart.map(item=>`
+  content.innerHTML = cart.map(item=>{
+    const imgContent = item.image
+      ? `<img src="${item.image}" alt="${item.name}">`
+      : item.icon;
+    return `
     <div class="cart-item">
-      <div class="ci-img">${item.image ? `<img src="${item.image}" style="width:100%;height:100%;object-fit:cover;border-radius:15px">` : item.icon}</div>
+      <div class="ci-img">${imgContent}</div>
       <div class="ci-info">
         <h4>${item.name}</h4>
         <div class="ci-price">${item.price.toLocaleString('fa-IR')} تومان</div>
@@ -803,7 +802,7 @@ function renderCart(){
       </div>
       <button class="remove-btn" onclick="removeItem(${item.id})">🗑️</button>
     </div>
-  `).join('') + `
+  `}).join('') + `
     <div class="cart-total">
       <div>مبلغ کل:</div>
       <div class="total-price">${total.toLocaleString('fa-IR')} تومان</div>
@@ -825,7 +824,6 @@ function removeItem(id){
   saveAll(); updateCartCount(); renderCart();
 }
 
-/* ============ صفحه پرداخت ============ */
 function copyCard(){
   navigator.clipboard.writeText(settings.card.replace(/-/g,''));
   showToast('📋 شماره کارت کپی شد');
@@ -845,6 +843,40 @@ function submitOrder(e){
   saveAll();
   updateCartCount();
   e.target.reset();
+}
+
+/* ============ آپلود عکس ============ */
+function handleImageUpload(event){
+  const file = event.target.files[0];
+  if(!file) return;
+
+  if(file.size > 2 * 1024 * 1024){
+    showToast('❌ حجم عکس نباید بیشتر از ۲ مگابایت باشه');
+    event.target.value = '';
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(e){
+    const base64 = e.target.result;
+    document.getElementById('pImage').value = base64;
+    document.getElementById('imagePreview').innerHTML = `
+      <div style="position:relative;display:inline-block">
+        <img src="${base64}" style="width:150px;height:150px;object-fit:cover;border-radius:14px;border:3px solid var(--gold)">
+        <button type="button" onclick="removeImage()" style="position:absolute;top:-8px;left:-8px;width:30px;height:30px;border-radius:50%;background:#e74c3c;color:white;border:none;cursor:pointer;font-size:1rem;font-weight:700">✕</button>
+      </div>
+      <p style="margin-top:8px;font-size:.85rem;color:var(--brown)">✅ عکس بارگذاری شد</p>
+    `;
+    showToast('📸 عکس با موفقیت بارگذاری شد');
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeImage(){
+  document.getElementById('pImage').value = '';
+  document.getElementById('pImageFile').value = '';
+  document.getElementById('imagePreview').innerHTML = '';
+  showToast('🗑️ عکس حذف شد');
 }
 
 /* ============ ادمین ============ */
@@ -868,10 +900,11 @@ function adminLogout(){
   showPage('home');
 }
 
-function switchTab(name){
+function switchTab(name, ev){
   document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));
   document.querySelectorAll('.admin-tab-content').forEach(c=>c.classList.remove('active'));
-  event.target.classList.add('active');
+  if(ev && ev.target) ev.target.classList.add('active');
+  else document.querySelectorAll('.admin-tab')[name==='list'?0:name==='add'?1:2].classList.add('active');
   document.getElementById('tab-'+name).classList.add('active');
 }
 
@@ -881,9 +914,13 @@ function renderAdminProducts(){
     list.innerHTML = '<p style="text-align:center;padding:40px;color:var(--brown)">هنوز محصولی ثبت نشده</p>';
     return;
   }
-  list.innerHTML = products.map(p=>`
+  list.innerHTML = products.map(p=>{
+    const imgContent = p.image
+      ? `<img src="${p.image}" alt="${p.name}">`
+      : p.icon;
+    return `
     <div class="admin-product-row">
-      <div class="ap-img">${p.image ? `<img src="${p.image}" style="width:100%;height:100%;object-fit:cover;border-radius:14px">` : p.icon}</div>
+      <div class="ap-img">${imgContent}</div>
       <div class="ap-info">
         <h4>${p.name}</h4>
         <div class="ap-price">${p.price.toLocaleString('fa-IR')} تومان</div>
@@ -893,7 +930,7 @@ function renderAdminProducts(){
         <button class="icon-btn danger" onclick="deleteProduct(${p.id})" title="حذف">🗑️</button>
       </div>
     </div>
-  `).join('');
+  `}).join('');
 }
 
 function saveProduct(e){
@@ -909,7 +946,7 @@ function saveProduct(e){
     name: document.getElementById('pName').value.trim(),
     price: parseInt(document.getElementById('pPrice').value),
     icon: document.getElementById('pIcon').value.trim() || '☕',
-    image: document.getElementById('pImage').value.trim(),
+    image: document.getElementById('pImage').value,
     short: document.getElementById('pShort').value.trim(),
     full: document.getElementById('pFull').value.trim(),
     specs
@@ -925,13 +962,19 @@ function saveProduct(e){
     showToast('✅ محصول جدید اضافه شد');
   }
 
-  saveAll();
+  if(!saveAll()) return;
   renderAdminProducts();
-  e.target.reset();
-  document.getElementById('editId').value='';
-  document.getElementById('formTitle').textContent='افزودن محصول جدید';
-  document.getElementById('pIcon').value='☕';
+  resetForm();
   switchTab('list');
+}
+
+function resetForm(){
+  document.getElementById('productForm').reset();
+  document.getElementById('editId').value='';
+  document.getElementById('pImage').value='';
+  document.getElementById('imagePreview').innerHTML='';
+  document.getElementById('pIcon').value='☕';
+  document.getElementById('formTitle').textContent='افزودن محصول جدید';
 }
 
 function editProduct(id){
@@ -946,9 +989,16 @@ function editProduct(id){
   document.getElementById('pFull').value = p.full;
   document.getElementById('pSpecs').value = (p.specs||[]).map(s=>`${s[0]} | ${s[1]}`).join('\n');
   document.getElementById('formTitle').textContent = 'ویرایش محصول';
+
+  document.getElementById('imagePreview').innerHTML = p.image ? `
+    <div style="position:relative;display:inline-block">
+      <img src="${p.image}" style="width:150px;height:150px;object-fit:cover;border-radius:14px;border:3px solid var(--gold)">
+      <button type="button" onclick="removeImage()" style="position:absolute;top:-8px;left:-8px;width:30px;height:30px;border-radius:50%;background:#e74c3c;color:white;border:none;cursor:pointer;font-size:1rem;font-weight:700">✕</button>
+    </div>
+  ` : '';
+  document.getElementById('pImageFile').value = '';
+
   switchTab('add');
-  document.querySelectorAll('.admin-tab').forEach(t=>t.classList.remove('active'));
-  document.querySelectorAll('.admin-tab')[1].classList.add('active');
 }
 
 function deleteProduct(id){
@@ -977,10 +1027,17 @@ function saveSettings(){
 function applySettings(){
   document.getElementById('cardNumber').textContent = settings.card;
   document.getElementById('phoneNumber').textContent = settings.phone;
-  document.querySelector('.logo').innerHTML = `<div class="cup">☕</div> ${settings.brand}`;
+  document.getElementById('brandName').textContent = settings.brand;
 }
 
-/* ============ اعلان ============ */
+function resetAllData(){
+  if(!confirm('⚠️ همه محصولات و تنظیمات حذف میشن و به حالت اولیه برمی‌گردن. مطمئنی؟')) return;
+  localStorage.removeItem('coffee_products');
+  localStorage.removeItem('coffee_cart');
+  localStorage.removeItem('coffee_settings');
+  location.reload();
+}
+
 let toastTimer;
 function showToast(msg){
   clearTimeout(toastTimer);
@@ -992,7 +1049,6 @@ function showToast(msg){
   toastTimer = setTimeout(()=>t.remove(), 3000);
 }
 
-/* ============ راه‌اندازی ============ */
 renderProducts();
 updateCartCount();
 applySettings();
